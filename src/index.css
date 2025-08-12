@@ -17,24 +17,40 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 342 88% 47%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 256 100% 25%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 48 100% 50%;
+    --accent-foreground: 222.2 84% 4.9%;
+
+    --teal: 174 100% 33%;
+    --teal-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 342 88% 47%;
+
+    /* Dashboard specific colors */
+    --dashboard-bg: 0 0% 98%;
+    --chart-grid: 220 13% 91%;
+    
+    /* Brand gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(342 88% 47%), hsl(256 100% 25%));
+    --gradient-accent: linear-gradient(135deg, hsl(48 100% 50%), hsl(174 100% 33%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    
+    /* Shadows */
+    --shadow-card: 0 4px 20px -2px hsl(342 88% 47% / 0.1);
+    --shadow-chart: 0 8px 32px -4px hsl(256 100% 25% / 0.15);
 
     --radius: 0.5rem;
 
