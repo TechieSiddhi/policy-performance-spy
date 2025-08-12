@@ -12,6 +12,9 @@ import { ChannelPerformanceChart } from "@/components/dashboard/charts/ChannelPe
 import { RegionalAnalysisView } from "@/components/dashboard/views/RegionalAnalysisView";
 import { ProductPortfolioView } from "@/components/dashboard/views/ProductPortfolioView";
 import { ConcerningCasesDetail } from "@/components/dashboard/views/ConcerningCasesDetail";
+import { BranchPerformanceView } from "@/components/dashboard/views/BranchPerformanceView";
+import { ChannelAnalysisView } from "@/components/dashboard/views/ChannelAnalysisView";
+import { TrendsAnalysisView } from "@/components/dashboard/views/TrendsAnalysisView";
 import { kpiOverview } from "@/data/mockData";
 import { 
   TrendingUp, 
@@ -166,17 +169,39 @@ const EnhancedDashboard = () => {
       case "regional":
         return <RegionalAnalysisView />;
       
+      case "branch":
+        return <BranchPerformanceView />;
+      
       case "product":
         return <ProductPortfolioView />;
       
+      case "channel":
+        return <ChannelAnalysisView />;
+      
       case "concerning":
         return <ConcerningCasesDetail />;
+      
+      case "trends":
+        return <TrendsAnalysisView />;
+      
+      case "performance":
+        return (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-foreground">Performance Metrics</h2>
+            <p className="text-muted-foreground">Comprehensive performance analytics across all dimensions</p>
+            {/* This could include a combined view of all metrics */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <RegionalAnalysisView />
+              <BranchPerformanceView />
+            </div>
+          </div>
+        );
       
       default:
         return (
           <div className="text-center py-12">
             <h3 className="text-lg font-semibold text-muted-foreground">
-              {activeView.charAt(0).toUpperCase() + activeView.slice(1)} View
+              {String(activeView).charAt(0).toUpperCase() + String(activeView).slice(1)} View
             </h3>
             <p className="text-muted-foreground mt-2">
               This view is under development. Please check back soon!
