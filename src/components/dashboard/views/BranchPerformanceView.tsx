@@ -442,17 +442,77 @@ export function BranchPerformanceView() {
             </div>
 
             <div className="mt-6 pt-6 border-t">
-              <div className="flex gap-2">
-                <Button className="flex items-center gap-2">
-                  <Eye className="w-4 h-4" />
-                  View Detailed Report
-                </Button>
-                <Button variant="outline">
+              <div className="flex gap-2 mb-4">
+                <Button variant="outline" className="flex items-center gap-2">
                   Compare with Peers
                 </Button>
-                <Button variant="outline">
-                  Action Plan
-                </Button>
+              </div>
+              
+              {/* Peer Comparison Table */}
+              <div className="mt-4 p-4 bg-muted/20 rounded-lg">
+                <h4 className="font-semibold text-foreground mb-3">Branch vs Peer Comparison</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Branch:</span>
+                      <span className="font-medium">{selectedBranchData.branchName}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Policies:</span>
+                      <span className="font-medium">{selectedBranchData.policies.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Collection Rate:</span>
+                      <span className="font-medium text-primary">{selectedBranchData.collectionRate}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Common Products:</span>
+                      <span className="font-medium">Term Life, ULIP, Endowment</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Peer Branch:</span>
+                      <span className="font-medium">Delhi Central (BR001)</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Policies:</span>
+                      <span className="font-medium">450</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Collection Rate:</span>
+                      <span className="font-medium text-teal">96.8%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Common Products:</span>
+                      <span className="font-medium">Term Life, ULIP, Endowment</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Performance Gap:</span>
+                      <span className={`font-medium ${(96.8 - selectedBranchData.collectionRate) > 0 ? 'text-accent' : 'text-teal'}`}>
+                        {(96.8 - selectedBranchData.collectionRate) > 0 ? '+' : ''}{(96.8 - selectedBranchData.collectionRate).toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Policy Gap:</span>
+                      <span className="font-medium">{(450 - selectedBranchData.policies).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Opportunity:</span>
+                      <span className="font-medium text-accent">₹{((450 - selectedBranchData.policies) * 5000 / 1000000).toFixed(1)}M</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Ranking:</span>
+                      <Badge variant="outline">
+                        #{branchPerformanceData.sort((a, b) => b.collectionRate - a.collectionRate).findIndex(b => b.branchCode === selectedBranchData.branchCode) + 1} of {branchPerformanceData.length}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>

@@ -205,30 +205,18 @@ export function TrendsAnalysisView() {
         </div>
       </ChartCard>
 
-      {/* Key Insights & Recommendations */}
-      <div className="mt-12 p-6 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg border border-primary/20">
-        <h2 className="text-xl font-semibold mb-4 text-foreground">
-          📊 Predictive Insights & Strategic Recommendations
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-4 bg-card rounded-lg border">
-            <h3 className="font-medium text-teal mb-2">💡 Growth Opportunities</h3>
-            <p className="text-sm text-muted-foreground">
-              Forecasted collections show 8.5% growth potential. Focus on Q4 retention strategies to maximize revenue.
-            </p>
-          </div>
-          <div className="p-4 bg-card rounded-lg border">
-            <h3 className="font-medium text-primary mb-2">📈 Trend Analysis</h3>
-            <p className="text-sm text-muted-foreground">
-              Collection rate trending upward with 94.3% forecast accuracy. Expected to reach 95% target by Dec.
-            </p>
-          </div>
-          <div className="p-4 bg-card rounded-lg border">
-            <h3 className="font-medium text-accent mb-2">⚡ Action Items</h3>
-            <p className="text-sm text-muted-foreground">
-              Deploy AI-powered risk models to identify vulnerable policies. Implement proactive outreach programs.
-            </p>
-          </div>
+      {/* Compare with Peers */}
+      <div className="mt-8 p-6 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg border border-primary/20">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-foreground">
+            📊 Compare with Peers
+          </h2>
+          <Button variant="outline">
+            View Branch Comparison
+          </Button>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Access detailed branch performance comparisons and peer analysis in the Branch Performance section.
         </div>
       </div>
     </div>
