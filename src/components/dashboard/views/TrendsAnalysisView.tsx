@@ -1,211 +1,171 @@
-import { useState } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+import React from "react";
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
   ResponsiveContainer,
-  Tooltip,
-  AreaChart,
-  Area,
   ComposedChart,
   Bar,
-  ReferenceLine
+  Area,
+  AreaChart
 } from 'recharts';
-import { ChartCard } from "../ChartCard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ChartCard } from '../ChartCard';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  TrendingUp,
-  TrendingDown,
-  Calendar,
-  BarChart3,
-  Target,
-  AlertTriangle,
-  Zap,
-  Activity
+  TrendingUp, 
+  TrendingDown, 
+  AlertCircle, 
+  Target
 } from "lucide-react";
-import { monthlyTrends } from "@/data/mockData";
 
-// Extended historical data with forecasting
-const extendedTrendsData = [
-  ...monthlyTrends.map(item => ({ ...item, forecast: false })),
-  // Forecasted data
-  { month: "SEP-25", policies: 13100, collectionRate: 91.8, collections: 60200000, forecast: true },
-  { month: "OCT-25", policies: 13350, collectionRate: 92.2, collections: 61800000, forecast: true },
-  { month: "NOV-25", policies: 13500, collectionRate: 92.0, collections: 62500000, forecast: true },
-  { month: "DEC-25", policies: 13800, collectionRate: 91.5, collections: 63200000, forecast: true }
-];
-
-// Seasonal pattern analysis
-const seasonalData = [
-  { period: "Q1", avgCollectionRate: 89.2, volatility: 2.1, trend: "stable" },
-  { period: "Q2", avgCollectionRate: 89.9, volatility: 1.8, trend: "improving" },
-  { period: "Q3", avgCollectionRate: 91.0, volatility: 1.5, trend: "strong" },
-  { period: "Q4", avgCollectionRate: 88.5, volatility: 2.8, trend: "volatile" }
-];
-
-// Key performance indicators trends
-const kpiTrends = [
-  {
-    metric: "Collection Rate",
-    current: 91.1,
-    trend: 2.3,
-    forecast: 92.0,
-    target: 95.0,
-    status: "improving"
-  },
-  {
-    metric: "Policy Growth",
-    current: 2847,
-    trend: 8.2,
-    forecast: 3200,
-    target: 4000,
-    status: "on-track"
-  },
-  {
-    metric: "Premium Volume",
-    current: 58.4,
-    trend: 5.8,
-    forecast: 62.5,
-    target: 70.0,
-    status: "behind"
-  },
-  {
-    metric: "Risk Score",
-    current: 24.2,
-    trend: -12.1,
-    forecast: 20.5,
-    target: 15.0,
-    status: "improving"
-  }
+const forecastData = [
+  { month: 'Jan-25', collectionRate: 89.2, rpDue: 45.2, collection: 40.3, forecast: null },
+  { month: 'Feb-25', collectionRate: 91.5, rpDue: 47.8, collection: 43.8, forecast: null },
+  { month: 'Mar-25', collectionRate: 88.7, rpDue: 44.1, collection: 39.1, forecast: null },
+  { month: 'Apr-25', collectionRate: 92.3, rpDue: 48.9, collection: 45.1, forecast: null },
+  { month: 'May-25', collectionRate: 90.8, rpDue: 46.5, collection: 42.2, forecast: null },
+  { month: 'Jun-25', collectionRate: 93.1, rpDue: 49.7, collection: 46.3, forecast: null },
+  { month: 'Jul-25', collectionRate: 91.9, rpDue: 47.2, collection: 43.4, forecast: null },
+  { month: 'Aug-25', collectionRate: 92.7, rpDue: 48.3, collection: 44.8, forecast: null },
+  { month: 'Sep-25', collectionRate: null, rpDue: 49.1, collection: null, forecast: 45.9 },
+  { month: 'Oct-25', collectionRate: null, rpDue: 50.2, collection: null, forecast: 47.3 },
+  { month: 'Nov-25', collectionRate: null, rpDue: 51.0, collection: null, forecast: 48.4 },
+  { month: 'Dec-25', collectionRate: null, rpDue: 51.8, collection: null, forecast: 49.2 }
 ];
 
 export function TrendsAnalysisView() {
-  const [selectedMetric, setSelectedMetric] = useState<string>("collectionRate");
-  const [forecastEnabled, setForecastEnabled] = useState(true);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "improving":
-      case "strong":
-      case "on-track":
-        return "text-teal bg-teal/10";
-      case "stable":
-        return "text-accent bg-accent/10";
-      case "behind":
-      case "volatile":
-        return "text-destructive bg-destructive/10";
-      default:
-        return "text-muted-foreground bg-muted/10";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "improving":
-      case "strong":
-      case "on-track":
-        return <TrendingUp className="w-4 h-4" />;
-      case "behind":
-      case "volatile":
-        return <TrendingDown className="w-4 h-4" />;
-      default:
-        return <Activity className="w-4 h-4" />;
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-foreground">Trends & Forecasting Dashboard</h2>
-          <p className="text-muted-foreground">
-            Historical analysis with AI-powered forecasting and seasonal insights
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant={forecastEnabled ? "default" : "outline"}
-            onClick={() => setForecastEnabled(!forecastEnabled)}
-            size="sm"
-          >
-            <Zap className="w-4 h-4 mr-1" />
-            {forecastEnabled ? "Hide" : "Show"} Forecast
-          </Button>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-bold text-foreground">Trends & Forecasting</h2>
+        <p className="text-muted-foreground">AI-powered analytics and future performance predictions</p>
       </div>
 
-      {/* KPI Trends Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpiTrends.map((kpi, index) => (
-          <Card key={kpi.metric}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium flex items-center justify-between">
-                <span>{kpi.metric}</span>
-                <Badge className={getStatusColor(kpi.status)}>
-                  {getStatusIcon(kpi.status)}
-                  {kpi.status}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <div className="text-2xl font-bold">
-                  {kpi.metric.includes("Rate") ? `${kpi.current}%` : 
-                   kpi.metric.includes("Volume") ? `₹${kpi.current}M` : 
-                   kpi.current.toLocaleString()}
-                </div>
-                <div className="flex items-center gap-1">
-                  {kpi.trend > 0 ? (
-                    <TrendingUp className="w-3 h-3 text-teal" />
-                  ) : (
-                    <TrendingDown className="w-3 h-3 text-destructive" />
-                  )}
-                  <span className={`text-xs ${kpi.trend > 0 ? 'text-teal' : 'text-destructive'}`}>
-                    {kpi.trend > 0 ? '+' : ''}{kpi.trend}%
-                  </span>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Target: {kpi.metric.includes("Rate") ? `${kpi.target}%` : 
-                          kpi.metric.includes("Volume") ? `₹${kpi.target}M` : 
-                          kpi.target.toLocaleString()}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Advanced Analytics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="border-primary/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              Growth Momentum
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-primary">+5.8%</div>
+            <p className="text-sm text-muted-foreground">Monthly growth rate</p>
+            <Badge variant="secondary" className="mt-2">Accelerating</Badge>
+          </CardContent>
+        </Card>
+
+        <Card className="border-teal/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Target className="w-5 h-5 text-teal" />
+              Forecast Accuracy
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-teal">94.3%</div>
+            <p className="text-sm text-muted-foreground">Model precision</p>
+            <Badge variant="secondary" className="mt-2">High Confidence</Badge>
+          </CardContent>
+        </Card>
+
+        <Card className="border-accent/20">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-accent" />
+              Risk Indicators
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-accent">Medium</div>
+            <p className="text-sm text-muted-foreground">Market volatility</p>
+            <Badge variant="secondary" className="mt-2">Monitored</Badge>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Historical Trends with Forecast */}
+      {/* Collection Rate Trends & Forecast */}
       <ChartCard 
         title="Collection Rate Trends & Forecast" 
-        description="Historical performance with AI-powered 4-month forecast"
+        description="Historical performance with AI-powered future predictions"
         variant="primary"
       >
-        <div className="h-96">
+        <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart data={extendedTrendsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <LineChart data={forecastData}>
+              <defs>
+                <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
               <XAxis 
                 dataKey="month" 
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
-                angle={-45}
-                textAnchor="end"
-                height={80}
               />
               <YAxis 
-                yAxisId="left"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
-                domain={[86, 94]}
+                domain={[85, 98]}
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '8px'
+                }}
+                formatter={(value, name) => [
+                  `${value}%`, 
+                  name === 'collectionRate' ? 'Collection Rate' : 'Forecast Rate'
+                ]}
+              />
+              <Area
+                type="monotone"
+                dataKey="collectionRate"
+                stroke="hsl(var(--primary))"
+                strokeWidth={3}
+                fill="url(#actualGradient)"
+                connectNulls={false}
+              />
+              <Line
+                type="monotone"
+                dataKey="forecast"
+                stroke="hsl(var(--teal))"
+                strokeWidth={3}
+                strokeDasharray="8 4"
+                dot={{ fill: 'hsl(var(--teal))', strokeWidth: 2, r: 4 }}
+                connectNulls={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </ChartCard>
+
+      {/* Revenue Growth Trajectory */}
+      <ChartCard 
+        title="Revenue Growth Trajectory" 
+        description="Total RP Due vs Collections with forecasted values (₹ Millions)"
+        variant="secondary"
+      >
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={forecastData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
+              <XAxis 
+                dataKey="month" 
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
               />
               <YAxis 
-                yAxisId="right"
-                orientation="right"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
               />
@@ -215,266 +175,62 @@ export function TrendsAnalysisView() {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px'
                 }}
-                formatter={(value, name, props) => {
-                  const isForecast = props.payload?.forecast;
-                  if (name === 'collectionRate') {
-                    return [`${value}%${isForecast ? ' (Forecast)' : ''}`, 'Collection Rate'];
-                  }
-                  if (name === 'policies') {
-                    return [Number(value).toLocaleString(), 'Total Policies'];
-                  }
-                  return [value, name];
-                }}
+                formatter={(value, name) => [
+                  `₹${value}M`, 
+                  name === 'rpDue' ? 'Total RP Due' : name === 'collection' ? 'Total Collections' : 'Forecasted Collections'
+                ]}
               />
-              
-              {/* Historical data */}
-              <Area
-                yAxisId="left"
-                type="monotone"
-                dataKey="collectionRate"
-                stroke="hsl(var(--primary))"
-                fill="hsl(var(--primary))"
-                fillOpacity={0.1}
-                strokeWidth={3}
-                data={extendedTrendsData.filter(d => !d.forecast)}
-              />
-              
-              {/* Forecast data */}
-              {forecastEnabled && (
-                <Line
-                  yAxisId="left"
-                  type="monotone"
-                  dataKey="collectionRate"
-                  stroke="hsl(var(--accent))"
-                  strokeDasharray="5 5"
-                  strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--accent))', strokeWidth: 2, r: 4 }}
-                  data={extendedTrendsData.filter(d => d.forecast)}
-                />
-              )}
-
               <Bar 
-                yAxisId="right" 
-                dataKey="policies" 
-                fill="hsl(var(--secondary))" 
-                opacity={0.3}
-                radius={[2, 2, 0, 0]}
+                dataKey="rpDue" 
+                fill="hsl(var(--chart-2))" 
+                name="rpDue"
+                radius={[4, 4, 0, 0]}
               />
-
-              {/* Target line */}
-              <ReferenceLine 
-                yAxisId="left" 
-                y={95} 
+              <Bar 
+                dataKey="collection" 
+                fill="hsl(var(--primary))" 
+                name="collection"
+                radius={[4, 4, 0, 0]}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="forecast" 
                 stroke="hsl(var(--teal))" 
-                strokeDasharray="3 3" 
-                label={{ value: "Target: 95%", position: "top" }}
+                strokeWidth={3}
+                strokeDasharray="8 4"
+                dot={{ fill: 'hsl(var(--teal))', strokeWidth: 2, r: 4 }}
               />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
       </ChartCard>
 
-      {/* Seasonal Analysis & Revenue Trends */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Seasonal Patterns */}
-        <ChartCard 
-          title="Seasonal Performance Patterns" 
-          description="Quarterly trends showing seasonal variations"
-          variant="secondary"
-        >
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={seasonalData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
-                <XAxis 
-                  dataKey="period" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  yAxisId="left"
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <YAxis 
-                  yAxisId="right"
-                  orientation="right"
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px'
-                  }}
-                  formatter={(value, name) => {
-                    if (name === 'avgCollectionRate') return [`${value}%`, 'Avg Collection Rate'];
-                    if (name === 'volatility') return [`${value}%`, 'Volatility'];
-                    return [value, name];
-                  }}
-                />
-                <Bar 
-                  yAxisId="left" 
-                  dataKey="avgCollectionRate" 
-                  fill="hsl(var(--primary))" 
-                  opacity={0.8}
-                  radius={[4, 4, 0, 0]}
-                />
-                <Line 
-                  yAxisId="right" 
-                  type="monotone" 
-                  dataKey="volatility" 
-                  stroke="hsl(var(--destructive))" 
-                  strokeWidth={3}
-                  dot={{ fill: 'hsl(var(--destructive))', strokeWidth: 2, r: 4 }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
-
-        {/* Revenue Growth Trajectory */}
-        <ChartCard 
-          title="Revenue Growth Trajectory" 
-          description="Monthly collections with growth trend analysis"
-          variant="secondary"
-        >
-          <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={extendedTrendsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
-                <XAxis 
-                  dataKey="month" 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
-                />
-                <YAxis 
-                  stroke="hsl(var(--muted-foreground))"
-                  fontSize={12}
-                />
-                <Tooltip 
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px'
-                  }}
-                  formatter={(value, name, props) => {
-                    const isForecast = props.payload?.forecast;
-                    return [`₹${(Number(value) / 1000000).toFixed(1)}M${isForecast ? ' (Forecast)' : ''}`, 'Collections'];
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="collections"
-                  stroke="hsl(var(--teal))"
-                  fill="hsl(var(--teal))"
-                  fillOpacity={0.3}
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </ChartCard>
-      </div>
-
       {/* Key Insights & Recommendations */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
-            Predictive Insights & Strategic Recommendations
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-teal" />
-                Opportunities
-              </h4>
-              <div className="space-y-3">
-                <div className="p-3 bg-teal/10 border border-teal/20 rounded-lg">
-                  <div className="font-medium text-teal mb-1">Q3 Peak Performance</div>
-                  <div className="text-sm text-muted-foreground">
-                    Collection rates consistently peak in Q3. Optimize resource allocation during Jul-Sep.
-                  </div>
-                </div>
-                <div className="p-3 bg-teal/10 border border-teal/20 rounded-lg">
-                  <div className="font-medium text-teal mb-1">Growth Acceleration</div>
-                  <div className="text-sm text-muted-foreground">
-                    Policy acquisition trending 8.2% YoY. Target 15% growth with enhanced digital channels.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-destructive" />
-                Risk Factors
-              </h4>
-              <div className="space-y-3">
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <div className="font-medium text-destructive mb-1">Q4 Volatility</div>
-                  <div className="text-sm text-muted-foreground">
-                    Historical 2.8% volatility in Q4. Implement proactive retention strategies.
-                  </div>
-                </div>
-                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                  <div className="font-medium text-destructive mb-1">Collection Gap</div>
-                  <div className="text-sm text-muted-foreground">
-                    Current 91.1% vs 95% target. Need 4% improvement to meet annual goals.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-semibold text-foreground flex items-center gap-2">
-                <Target className="w-4 h-4 text-primary" />
-                Action Items
-              </h4>
-              <div className="space-y-3">
-                <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
-                  <div className="font-medium text-primary mb-1">AI-Powered Collections</div>
-                  <div className="text-sm text-muted-foreground">
-                    Deploy predictive models to identify at-risk policies 30 days in advance.
-                  </div>
-                </div>
-                <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
-                  <div className="font-medium text-primary mb-1">Seasonal Strategies</div>
-                  <div className="text-sm text-muted-foreground">
-                    Develop Q4-specific retention programs targeting high-value policies.
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div className="mt-12 p-6 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-lg border border-primary/20">
+        <h2 className="text-xl font-semibold mb-4 text-foreground">
+          📊 Predictive Insights & Strategic Recommendations
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="p-4 bg-card rounded-lg border">
+            <h3 className="font-medium text-teal mb-2">💡 Growth Opportunities</h3>
+            <p className="text-sm text-muted-foreground">
+              Forecasted collections show 8.5% growth potential. Focus on Q4 retention strategies to maximize revenue.
+            </p>
           </div>
-
-          <div className="mt-6 pt-6 border-t">
-            <div className="flex gap-2 flex-wrap">
-              <Button className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Schedule Strategic Review
-              </Button>
-              <Button variant="outline">
-                Export Trend Report
-              </Button>
-              <Button variant="outline">
-                Set Forecast Alerts
-              </Button>
-              <Button variant="outline">
-                <BarChart3 className="w-4 h-4 mr-1" />
-                Advanced Analytics
-              </Button>
-            </div>
+          <div className="p-4 bg-card rounded-lg border">
+            <h3 className="font-medium text-primary mb-2">📈 Trend Analysis</h3>
+            <p className="text-sm text-muted-foreground">
+              Collection rate trending upward with 94.3% forecast accuracy. Expected to reach 95% target by Dec.
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <div className="p-4 bg-card rounded-lg border">
+            <h3 className="font-medium text-accent mb-2">⚡ Action Items</h3>
+            <p className="text-sm text-muted-foreground">
+              Deploy AI-powered risk models to identify vulnerable policies. Implement proactive outreach programs.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

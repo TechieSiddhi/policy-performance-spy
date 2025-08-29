@@ -15,13 +15,10 @@ import {
 
 export type DashboardView = 
   | "overview" 
-  | "regional" 
   | "branch" 
   | "product" 
-  | "channel" 
   | "concerning" 
-  | "trends" 
-  | "performance";
+  | "trends";
 
 interface NavigationTabsProps {
   activeView: DashboardView;
@@ -30,13 +27,10 @@ interface NavigationTabsProps {
 
 const navigationItems = [
   { key: "overview" as DashboardView, label: "Overview", icon: BarChart3 },
-  { key: "regional" as DashboardView, label: "Regional Analysis", icon: Globe },
   { key: "branch" as DashboardView, label: "Branch Performance", icon: Building },
   { key: "product" as DashboardView, label: "Product Portfolio", icon: Package },
-  { key: "channel" as DashboardView, label: "Channel Analysis", icon: Radio },
   { key: "concerning" as DashboardView, label: "Concerning Cases", icon: AlertTriangle },
-  { key: "trends" as DashboardView, label: "Trends & Forecasts", icon: TrendingUp },
-  { key: "performance" as DashboardView, label: "Performance Metrics", icon: Users }
+  { key: "trends" as DashboardView, label: "Trends & Forecasts", icon: TrendingUp }
 ];
 
 export function NavigationTabs({ activeView, onViewChange }: NavigationTabsProps) {

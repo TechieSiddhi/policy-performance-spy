@@ -166,36 +166,17 @@ const EnhancedDashboard = () => {
           </div>
         );
       
-      case "regional":
-        return <RegionalAnalysisView />;
-      
       case "branch":
         return <BranchPerformanceView />;
       
       case "product":
         return <ProductPortfolioView />;
       
-      case "channel":
-        return <ChannelAnalysisView />;
-      
       case "concerning":
         return <ConcerningCasesDetail />;
       
       case "trends":
         return <TrendsAnalysisView />;
-      
-      case "performance":
-        return (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-foreground">Performance Metrics</h2>
-            <p className="text-muted-foreground">Comprehensive performance analytics across all dimensions</p>
-            {/* This could include a combined view of all metrics */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <RegionalAnalysisView />
-              <BranchPerformanceView />
-            </div>
-          </div>
-        );
       
       default:
         return (

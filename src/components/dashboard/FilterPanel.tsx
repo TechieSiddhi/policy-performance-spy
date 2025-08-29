@@ -114,18 +114,7 @@ export function FilterPanel({
       </div>
 
       {isOpen && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-          {/* Search */}
-          <div className="space-y-2">
-            <Label htmlFor="search">Search</Label>
-            <Input
-              id="search"
-              placeholder="Policy, Branch..."
-              value={filters.searchTerm}
-              onChange={(e) => updateFilter('searchTerm', e.target.value)}
-            />
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Region Filter */}
           <div className="space-y-2">
             <Label>Region</Label>
@@ -137,38 +126,6 @@ export function FilterPanel({
                 <SelectItem value="">All Regions</SelectItem>
                 {regions.map(region => (
                   <SelectItem key={region} value={region}>{region}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Branch Filter */}
-          <div className="space-y-2">
-            <Label>Branch</Label>
-            <Select value={filters.branch} onValueChange={(value) => updateFilter('branch', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Branches" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Branches</SelectItem>
-                {branches.map(branch => (
-                  <SelectItem key={branch} value={branch}>{branch}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Product Filter */}
-          <div className="space-y-2">
-            <Label>Product</Label>
-            <Select value={filters.product} onValueChange={(value) => updateFilter('product', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Products" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">All Products</SelectItem>
-                {products.map(product => (
-                  <SelectItem key={product} value={product}>{product}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -190,20 +147,31 @@ export function FilterPanel({
             </Select>
           </div>
 
-          {/* Payment Mechanism Filter */}
+          {/* Product Filter */}
           <div className="space-y-2">
-            <Label>Payment Method</Label>
-            <Select value={filters.paymentMechanism} onValueChange={(value) => updateFilter('paymentMechanism', value)}>
+            <Label>Product</Label>
+            <Select value={filters.product} onValueChange={(value) => updateFilter('product', value)}>
               <SelectTrigger>
-                <SelectValue placeholder="All Methods" />
+                <SelectValue placeholder="All Products" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Methods</SelectItem>
-                {paymentMechanisms.map(mechanism => (
-                  <SelectItem key={mechanism} value={mechanism}>{mechanism}</SelectItem>
+                <SelectItem value="">All Products</SelectItem>
+                {products.map(product => (
+                  <SelectItem key={product} value={product}>{product}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Search */}
+          <div className="space-y-2">
+            <Label htmlFor="search">Search</Label>
+            <Input
+              id="search"
+              placeholder="Policy, Branch..."
+              value={filters.searchTerm}
+              onChange={(e) => updateFilter('searchTerm', e.target.value)}
+            />
           </div>
         </div>
       )}

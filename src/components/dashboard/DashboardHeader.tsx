@@ -15,30 +15,15 @@ export function DashboardHeader() {
           Renewals Dashboard
         </h1>
         <p className="text-muted-foreground mt-1">
-          Comprehensive KPI analysis for policy renewals and collections
+          Real-time insights and analytics for policy renewals performance
         </p>
       </div>
       
       <div className="flex items-center gap-3">
-        <Button variant="outline" size="sm">
-          <Calendar className="w-4 h-4 mr-2" />
-          AUG-25
-        </Button>
-        
-        <Button variant="outline" size="sm">
-          <Filter className="w-4 h-4 mr-2" />
-          Filters
-        </Button>
-        
-        <Button variant="outline" size="sm">
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Refresh
-        </Button>
-        
-        <Button variant="default" size="sm">
-          <Download className="w-4 h-4 mr-2" />
-          Export
-        </Button>
+        <div className="text-sm text-muted-foreground flex items-center gap-2">
+          <TrendingUp className="w-4 h-4" />
+          Last updated: {new Date().toLocaleTimeString()}
+        </div>
       </div>
     </div>
   );
