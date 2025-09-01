@@ -14,7 +14,7 @@ import { ProductPortfolioView } from "@/components/dashboard/views/ProductPortfo
 import { ConcerningCasesDetail } from "@/components/dashboard/views/ConcerningCasesDetail";
 import { BranchPerformanceView } from "@/components/dashboard/views/BranchPerformanceView";
 import { ChannelAnalysisView } from "@/components/dashboard/views/ChannelAnalysisView";
-import { TrendsAnalysisView } from "@/components/dashboard/views/TrendsAnalysisView";
+
 import { kpiOverview } from "@/data/mockData";
 import { 
   TrendingUp, 
@@ -172,11 +172,6 @@ const EnhancedDashboard = () => {
       case "product":
         return <ProductPortfolioView />;
       
-      case "concerning":
-        return <ConcerningCasesDetail />;
-      
-      case "trends":
-        return <TrendsAnalysisView />;
       
       default:
         return (

@@ -87,79 +87,103 @@ const branchData = [
   }
 ];
 
-// Monthly trends data for selected branch
-const monthlyTrendsData = [
-  {
-    month: "Apr",
-    totalDue: 850000,
-    totalCollection: 782000,
-    forecastedCollection: 795000,
-    collectionRate: 92.0,
-  },
-  {
-    month: "May", 
-    totalDue: 920000,
-    totalCollection: 856400,
-    forecastedCollection: 874000,
-    collectionRate: 93.1,
-  },
-  {
-    month: "Jun",
-    totalDue: 880000,
-    totalCollection: 825600,
-    forecastedCollection: 845000,
-    collectionRate: 93.8,
-  },
-  {
-    month: "Jul",
-    totalDue: 950000,
-    totalCollection: 893500,
-    forecastedCollection: 912000,
-    collectionRate: 94.1,
-  },
-  {
-    month: "Aug",
-    totalDue: 1020000,
-    totalCollection: 969900,
-    forecastedCollection: 985000,
-    collectionRate: 95.1,
-  },
-  {
-    month: "Sep",
-    totalDue: 1100000,
-    totalCollection: 1045000,
-    forecastedCollection: 1065000,
-    collectionRate: 95.0,
-  },
-  {
-    month: "Oct",
-    totalDue: 1150000,
-    totalCollection: null,
-    forecastedCollection: 1104000,
-    collectionRate: null,
-  },
-  {
-    month: "Nov",
-    totalDue: 1200000,
-    totalCollection: null,
-    forecastedCollection: 1152000,
-    collectionRate: null,
-  },
-  {
-    month: "Dec",
-    totalDue: 1180000,
-    totalCollection: null,
-    forecastedCollection: 1133000,
-    collectionRate: null,
-  }
-];
+// Monthly trends data for selected branch - more realistic and insightful
+const getMonthlyTrendsData = (branchCode: string) => {
+  const baseData = [
+    {
+      month: "Apr",
+      totalDue: 850000,
+      totalCollection: 782000,
+      forecastedCollection: 795000,
+      collectionRate: 92.0,
+      efficiency: 92.0
+    },
+    {
+      month: "May", 
+      totalDue: 920000,
+      totalCollection: 856400,
+      forecastedCollection: 874000,
+      collectionRate: 93.1,
+      efficiency: 93.1
+    },
+    {
+      month: "Jun",
+      totalDue: 880000,
+      totalCollection: 825600,
+      forecastedCollection: 845000,
+      collectionRate: 93.8,
+      efficiency: 93.8
+    },
+    {
+      month: "Jul",
+      totalDue: 950000,
+      totalCollection: 893500,
+      forecastedCollection: 912000,
+      collectionRate: 94.1,
+      efficiency: 94.1
+    },
+    {
+      month: "Aug",
+      totalDue: 1020000,
+      totalCollection: 969900,
+      forecastedCollection: 985000,
+      collectionRate: 95.1,
+      efficiency: 95.1
+    },
+    {
+      month: "Sep",
+      totalDue: 1100000,
+      totalCollection: 1045000,
+      forecastedCollection: 1065000,
+      collectionRate: 95.0,
+      efficiency: 95.0
+    },
+    {
+      month: "Oct",
+      totalDue: 1150000,
+      totalCollection: null,
+      forecastedCollection: 1104000,
+      collectionRate: null,
+      efficiency: 96.0
+    },
+    {
+      month: "Nov",
+      totalDue: 1200000,
+      totalCollection: null,
+      forecastedCollection: 1152000,
+      collectionRate: null,
+      efficiency: 96.0
+    },
+    {
+      month: "Dec",
+      totalDue: 1180000,
+      totalCollection: null,
+      forecastedCollection: 1133000,
+      collectionRate: null,
+      efficiency: 96.1
+    }
+  ];
+
+  // Adjust data based on branch performance
+  const selectedBranch = branchData.find(b => b.branchCode === branchCode);
+  const performanceMultiplier = selectedBranch ? selectedBranch.collectionRate / 94.0 : 1;
+
+  return baseData.map(item => ({
+    ...item,
+    totalCollection: item.totalCollection ? Math.round(item.totalCollection * performanceMultiplier) : null,
+    forecastedCollection: Math.round(item.forecastedCollection * performanceMultiplier),
+    collectionRate: item.collectionRate ? Math.round(item.collectionRate * performanceMultiplier * 10) / 10 : null,
+    efficiency: Math.round(item.efficiency * performanceMultiplier * 10) / 10
+  }));
+};
 
 export function BranchPerformanceView() {
   const [selectedBranch, setSelectedBranch] = useState<string>("BR001");
   const [showPeerComparison, setShowPeerComparison] = useState(false);
 
-  const selectedBranchData = branchData.find(b => b.branchCode === selectedBranch);
+  const monthlyTrendsData = getMonthlyTrendsData(selectedBranch);
   const filteredBranches = branchData;
+  const selectedBranchData = branchData.find(b => b.branchCode === selectedBranch);
 
   // Get peer branch (same region, similar size)
   const peerBranch = branchData.find(b => 
@@ -248,12 +272,39 @@ export function BranchPerformanceView() {
         </CardContent>
       </Card>
 
-      {/* Monthly Trends Chart */}
+      {/* Enhanced Monthly Trends Chart */}
       <ChartCard 
-        title="Monthly Collection Trends & Forecast" 
-        description="Total Due vs Collections with forecasted performance"
+        title={`Monthly Performance Analysis - ${selectedBranchData?.branchName || 'Selected Branch'}`}
+        description="Collection trends, forecasts, and efficiency analysis with actionable insights"
         variant="primary"
       >
+        <div className="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+          <div className="text-center p-3 bg-primary/5 rounded-lg">
+            <div className="font-semibold text-primary">Current Month</div>
+            <div className="text-xs text-muted-foreground">September Performance</div>
+            <div className="font-bold">₹{((monthlyTrendsData[5]?.totalCollection || 0) / 1000).toFixed(0)}K</div>
+          </div>
+          <div className="text-center p-3 bg-teal/5 rounded-lg">
+            <div className="font-semibold text-teal">Forecast Accuracy</div>
+            <div className="text-xs text-muted-foreground">Aug Actual vs Forecast</div>
+            <div className="font-bold">
+              {monthlyTrendsData[4]?.totalCollection && monthlyTrendsData[4]?.forecastedCollection 
+                ? ((monthlyTrendsData[4].totalCollection / monthlyTrendsData[4].forecastedCollection) * 100).toFixed(1)
+                : '0.0'}%
+            </div>
+          </div>
+          <div className="text-center p-3 bg-accent/5 rounded-lg">
+            <div className="font-semibold text-accent">Growth Trend</div>
+            <div className="text-xs text-muted-foreground">6-Month Average</div>
+            <div className="font-bold">+8.2%</div>
+          </div>
+          <div className="text-center p-3 bg-secondary/5 rounded-lg">
+            <div className="font-semibold text-secondary">Risk Level</div>
+            <div className="text-xs text-muted-foreground">Based on Variance</div>
+            <div className="font-bold">Low</div>
+          </div>
+        </div>
+        
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={monthlyTrendsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -264,9 +315,18 @@ export function BranchPerformanceView() {
                 fontSize={12}
               />
               <YAxis 
+                yAxisId="amount"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}K`}
+              />
+              <YAxis 
+                yAxisId="rate"
+                orientation="right"
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+                tickFormatter={(value) => `${value}%`}
+                domain={[88, 98]}
               />
               <Tooltip 
                 contentStyle={{
@@ -276,24 +336,75 @@ export function BranchPerformanceView() {
                 }}
                 formatter={(value: any, name: string) => {
                   if (name === 'totalDue') return [`₹${(value / 1000).toFixed(0)}K`, 'Total Due'];
-                  if (name === 'totalCollection') return [`₹${(value / 1000).toFixed(0)}K`, 'Total Collection'];
+                  if (name === 'totalCollection') return [`₹${(value / 1000).toFixed(0)}K`, 'Actual Collection'];
                   if (name === 'forecastedCollection') return [`₹${(value / 1000).toFixed(0)}K`, 'Forecasted Collection'];
+                  if (name === 'efficiency') return [`${value}%`, 'Collection Efficiency'];
                   return [value, name];
                 }}
+                labelFormatter={(label) => `Month: ${label}`}
               />
-              <Bar dataKey="totalDue" fill="hsl(var(--chart-2))" name="totalDue" opacity={0.7} />
-              <Bar dataKey="totalCollection" fill="hsl(var(--chart-1))" name="totalCollection" />
+              
+              {/* Due Amount as light background bars */}
+              <Bar 
+                yAxisId="amount"
+                dataKey="totalDue" 
+                fill="hsl(var(--muted) / 0.3)" 
+                name="totalDue" 
+                radius={[2, 2, 0, 0]}
+              />
+              
+              {/* Actual Collections as primary bars */}
+              <Bar 
+                yAxisId="amount"
+                dataKey="totalCollection" 
+                fill="hsl(var(--primary))" 
+                name="totalCollection" 
+                radius={[2, 2, 0, 0]}
+              />
+              
+              {/* Forecasted Collections as dashed line */}
               <Line 
+                yAxisId="amount"
                 type="monotone" 
                 dataKey="forecastedCollection" 
                 stroke="hsl(var(--chart-3))" 
                 strokeWidth={3}
-                strokeDasharray="5 5"
+                strokeDasharray="8 4"
                 name="forecastedCollection"
-                dot={{ fill: 'hsl(var(--chart-3))', strokeWidth: 2, r: 4 }}
+                dot={{ fill: 'hsl(var(--chart-3))', strokeWidth: 2, r: 5 }}
+                connectNulls={false}
+              />
+              
+              {/* Collection Efficiency as smooth line */}
+              <Line 
+                yAxisId="rate"
+                type="monotone" 
+                dataKey="efficiency" 
+                stroke="hsl(var(--chart-1))" 
+                strokeWidth={2}
+                name="efficiency"
+                dot={{ fill: 'hsl(var(--chart-1))', strokeWidth: 2, r: 3 }}
               />
             </ComposedChart>
           </ResponsiveContainer>
+        </div>
+        
+        <div className="mt-4 p-4 bg-muted/10 rounded-lg">
+          <h4 className="font-semibold text-foreground mb-2">📊 Key Insights</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <span className="font-medium text-primary">Performance Trend:</span>
+              <p className="text-muted-foreground">Collection efficiency improved by 3.1% over 6 months, showing consistent growth.</p>
+            </div>
+            <div>
+              <span className="font-medium text-teal">Forecast Reliability:</span>
+              <p className="text-muted-foreground">August forecast was 98.4% accurate, indicating strong predictive capability.</p>
+            </div>
+            <div>
+              <span className="font-medium text-accent">Opportunity:</span>
+              <p className="text-muted-foreground">Gap between due and collected amounts represents ₹{((monthlyTrendsData[5]?.totalDue || 0) - (monthlyTrendsData[5]?.totalCollection || 0)) / 1000}K potential.</p>
+            </div>
+          </div>
         </div>
       </ChartCard>
 

@@ -17,8 +17,7 @@ export type DashboardView =
   | "overview" 
   | "branch" 
   | "product" 
-  | "concerning" 
-  | "trends";
+  | "concerning";
 
 interface NavigationTabsProps {
   activeView: DashboardView;
@@ -29,8 +28,7 @@ const navigationItems = [
   { key: "overview" as DashboardView, label: "Overview", icon: BarChart3 },
   { key: "branch" as DashboardView, label: "Branch Performance", icon: Building },
   { key: "product" as DashboardView, label: "Product Portfolio", icon: Package },
-  { key: "concerning" as DashboardView, label: "Concerning Cases", icon: AlertTriangle },
-  { key: "trends" as DashboardView, label: "Trends & Forecasts", icon: TrendingUp }
+  { key: "concerning" as DashboardView, label: "Concerning Cases", icon: AlertTriangle }
 ];
 
 export function NavigationTabs({ activeView, onViewChange }: NavigationTabsProps) {
