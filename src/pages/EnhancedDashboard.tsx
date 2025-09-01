@@ -172,6 +172,8 @@ const EnhancedDashboard = () => {
       case "product":
         return <ProductPortfolioView />;
       
+      case "concerning":
+        return <ConcerningCasesDetail />;
       
       default:
         return (
