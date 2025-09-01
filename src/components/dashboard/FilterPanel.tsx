@@ -54,18 +54,18 @@ export function FilterPanel({
 
   const clearFilters = () => {
     onFiltersChange({
-      region: "",
-      branch: "",
-      product: "",
-      channel: "",
-      paymentMechanism: "",
+      region: "all",
+      branch: "all",
+      product: "all",
+      channel: "all",
+      paymentMechanism: "all",
       dateRange: { from: undefined, to: undefined },
       searchTerm: ""
     });
   };
 
   const hasActiveFilters = Object.values(filters).some(value => {
-    if (typeof value === 'string') return value !== "";
+    if (typeof value === 'string') return value !== "" && value !== "all";
     if (typeof value === 'object' && value !== null) {
       return Object.values(value).some(v => v !== undefined);
     }
@@ -115,7 +115,7 @@ export function FilterPanel({
                 <SelectValue placeholder="All Regions" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Regions</SelectItem>
+                <SelectItem value="all">All Regions</SelectItem>
                 {regions.map(region => (
                   <SelectItem key={region} value={region}>{region}</SelectItem>
                 ))}
@@ -131,7 +131,7 @@ export function FilterPanel({
                 <SelectValue placeholder="All Channels" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Channels</SelectItem>
+                <SelectItem value="all">All Channels</SelectItem>
                 {channels.map(channel => (
                   <SelectItem key={channel} value={channel}>{channel}</SelectItem>
                 ))}
@@ -147,7 +147,7 @@ export function FilterPanel({
                 <SelectValue placeholder="All Products" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Products</SelectItem>
+                <SelectItem value="all">All Products</SelectItem>
                 {products.map(product => (
                   <SelectItem key={product} value={product}>{product}</SelectItem>
                 ))}
