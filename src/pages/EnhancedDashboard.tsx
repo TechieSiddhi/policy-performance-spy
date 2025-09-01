@@ -30,11 +30,11 @@ import {
 const EnhancedDashboard = () => {
   const [activeView, setActiveView] = useState<DashboardView>("overview");
   const [filters, setFilters] = useState<DashboardFilters>({
-    region: "",
-    branch: "",
-    product: "",
-    channel: "",
-    paymentMechanism: "",
+    region: "all",
+    branch: "all", 
+    product: "all",
+    channel: "all",
+    paymentMechanism: "all",
     dateRange: { from: undefined, to: undefined },
     searchTerm: ""
   });
