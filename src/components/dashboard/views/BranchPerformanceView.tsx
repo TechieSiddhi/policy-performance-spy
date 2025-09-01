@@ -1,34 +1,25 @@
 import { useState } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  ScatterChart,
-  Scatter,
-  Cell
-} from 'recharts';
-import { ChartCard } from "../ChartCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ChartCard } from "@/components/dashboard/ChartCard";
 import { Button } from "@/components/ui/button";
 import { 
-  Building,
-  TrendingUp, 
-  TrendingDown, 
-  Users,
-  DollarSign,
-  Target,
-  Eye,
-  Search
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  ComposedChart,
+  Area,
+  AreaChart
+} from "recharts";
+import { Building, TrendingUp, Users, DollarSign, Target } from "lucide-react";
 
-// Enhanced branch performance data
-const branchPerformanceData = [
+// Mock branch data
+const branchData = [
   {
     branchCode: "BR001",
     branchName: "Delhi Central",
@@ -43,50 +34,37 @@ const branchPerformanceData = [
     size: "Large"
   },
   {
-    branchCode: "BR002",
-    branchName: "Gurgaon",
-    region: "North", 
-    policies: 380,
-    collections: 1900000,
-    collectionRate: 95.2,
-    productivity: 5000,
-    growth: 6.2,
-    riskScore: 18,
-    manager: "Priya Singh",
-    size: "Medium"
-  },
-  {
-    branchCode: "BR021",
-    branchName: "Bangalore Tech",
-    region: "South",
+    branchCode: "BR002", 
+    branchName: "Mumbai West",
+    region: "West",
     policies: 520,
-    collections: 2080000,
-    collectionRate: 92.4,
-    productivity: 4000,
-    growth: 4.8,
-    riskScore: 22,
-    manager: "Suresh Nair",
+    collections: 2860000,
+    collectionRate: 94.2,
+    productivity: 5500,
+    growth: 12.3,
+    riskScore: 18,
+    manager: "Priya Sharma",
     size: "Large"
   },
   {
-    branchCode: "BR022",
-    branchName: "Chennai Port",
-    region: "South",
-    policies: 410,
-    collections: 1640000,
-    collectionRate: 88.9,
-    productivity: 4000,
-    growth: -1.2,
-    riskScore: 35,
-    manager: "Lakshmi Devi",
+    branchCode: "BR003",
+    branchName: "Bangalore South",
+    region: "South", 
+    policies: 380,
+    collections: 1900000,
+    collectionRate: 92.1,
+    productivity: 5000,
+    growth: 6.8,
+    riskScore: 22,
+    manager: "Suresh Reddy",
     size: "Medium"
   },
   {
-    branchCode: "BR041",
-    branchName: "Kolkata Commercial",
-    region: "East",
-    policies: 485,
-    collections: 1940000,
+    branchCode: "BR004",
+    branchName: "Chennai Central",
+    region: "South",
+    policies: 420,
+    collections: 2100000,
     collectionRate: 89.7,
     productivity: 4000,
     growth: 3.1,
@@ -95,93 +73,113 @@ const branchPerformanceData = [
     size: "Large"
   },
   {
-    branchCode: "BR061",
-    branchName: "Mumbai Central",
-    region: "West",
-    policies: 680,
-    collections: 3400000,
-    collectionRate: 95.1,
+    branchCode: "BR005",
+    branchName: "Kolkata North",
+    region: "East",
+    policies: 350,
+    collections: 1750000,
+    collectionRate: 91.4,
     productivity: 5000,
-    growth: 12.3,
-    riskScore: 12,
-    manager: "Neha Sharma",
-    size: "Large"
-  },
-  {
-    branchCode: "BR081",
-    branchName: "Indore",
-    region: "Central",
-    policies: 285,
-    collections: 1140000,
-    collectionRate: 88.4,
-    productivity: 4000,
-    growth: -2.1,
-    riskScore: 42,
-    manager: "Vikash Gupta",
-    size: "Small"
+    growth: 4.2,
+    riskScore: 25,
+    manager: "Anita Das",
+    size: "Medium"
   }
 ];
 
-const COLORS = [
-  'hsl(var(--primary))',
-  'hsl(var(--secondary))', 
-  'hsl(var(--accent))',
-  'hsl(var(--teal))',
-  'hsl(var(--muted-foreground))'
+// Monthly trends data for selected branch
+const monthlyTrendsData = [
+  {
+    month: "Apr",
+    totalDue: 850000,
+    totalCollection: 782000,
+    forecastedCollection: 795000,
+    collectionRate: 92.0,
+  },
+  {
+    month: "May", 
+    totalDue: 920000,
+    totalCollection: 856400,
+    forecastedCollection: 874000,
+    collectionRate: 93.1,
+  },
+  {
+    month: "Jun",
+    totalDue: 880000,
+    totalCollection: 825600,
+    forecastedCollection: 845000,
+    collectionRate: 93.8,
+  },
+  {
+    month: "Jul",
+    totalDue: 950000,
+    totalCollection: 893500,
+    forecastedCollection: 912000,
+    collectionRate: 94.1,
+  },
+  {
+    month: "Aug",
+    totalDue: 1020000,
+    totalCollection: 969900,
+    forecastedCollection: 985000,
+    collectionRate: 95.1,
+  },
+  {
+    month: "Sep",
+    totalDue: 1100000,
+    totalCollection: 1045000,
+    forecastedCollection: 1065000,
+    collectionRate: 95.0,
+  },
+  {
+    month: "Oct",
+    totalDue: 1150000,
+    totalCollection: null,
+    forecastedCollection: 1104000,
+    collectionRate: null,
+  },
+  {
+    month: "Nov",
+    totalDue: 1200000,
+    totalCollection: null,
+    forecastedCollection: 1152000,
+    collectionRate: null,
+  },
+  {
+    month: "Dec",
+    totalDue: 1180000,
+    totalCollection: null,
+    forecastedCollection: 1133000,
+    collectionRate: null,
+  }
 ];
 
 export function BranchPerformanceView() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
+  const [selectedBranch, setSelectedBranch] = useState<string>("BR001");
+  const [showPeerComparison, setShowPeerComparison] = useState(false);
 
-  const filteredBranches = branchPerformanceData.filter(branch =>
-    branch.branchName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    branch.branchCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    branch.manager.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const selectedBranchData = branchData.find(b => b.branchCode === selectedBranch);
+  const filteredBranches = branchData;
 
-  const handleBranchClick = (branchCode: string) => {
-    setSelectedBranch(selectedBranch === branchCode ? null : branchCode);
-  };
-
-  const selectedBranchData = branchPerformanceData.find(b => b.branchCode === selectedBranch);
-
-  const getRiskColor = (score: number) => {
-    if (score <= 20) return "text-teal bg-teal/10";
-    if (score <= 35) return "text-accent bg-accent/10";
-    return "text-destructive bg-destructive/10";
-  };
-
-  const getRiskLabel = (score: number) => {
-    if (score <= 20) return "Low Risk";
-    if (score <= 35) return "Medium Risk";
-    return "High Risk";
-  };
+  // Get peer branch (same region, similar size)
+  const peerBranch = branchData.find(b => 
+    b.branchCode !== selectedBranch && 
+    b.region === selectedBranchData?.region &&
+    b.size === selectedBranchData?.size
+  ) || branchData.find(b => b.branchCode !== selectedBranch); // fallback to any other branch
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Branch Performance Analysis</h2>
-          <p className="text-muted-foreground">
-            Individual branch metrics with productivity and risk scoring
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search branches..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-64"
-            />
-          </div>
+          <p className="text-muted-foreground">Individual branch metrics with productivity and forecasting</p>
         </div>
       </div>
 
-      {/* Performance Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Branch Selection and KPI Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <Card>
           <CardContent className="pt-6">
             <div className="text-center">
@@ -196,7 +194,7 @@ export function BranchPerformanceView() {
           <CardContent className="pt-6">
             <div className="text-center">
               <div className="text-2xl font-bold text-teal">
-                {Math.round(filteredBranches.reduce((sum, b) => sum + b.collectionRate, 0) / filteredBranches.length)}%
+                {(filteredBranches.reduce((sum, b) => sum + b.collectionRate, 0) / filteredBranches.length).toFixed(1)}%
               </div>
               <div className="text-sm text-muted-foreground">Avg Collection Rate</div>
             </div>
@@ -224,31 +222,51 @@ export function BranchPerformanceView() {
         </Card>
       </div>
 
-      {/* Performance vs Risk Scatter Chart */}
+      {/* Branch Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Select Branch for Analysis</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {branchData.map((branch) => (
+              <Button
+                key={branch.branchCode}
+                variant={selectedBranch === branch.branchCode ? "default" : "outline"}
+                className="p-4 h-auto flex flex-col items-start"
+                onClick={() => {
+                  setSelectedBranch(branch.branchCode);
+                  setShowPeerComparison(false);
+                }}
+              >
+                <div className="font-semibold">{branch.branchCode}</div>
+                <div className="text-xs opacity-70">{branch.branchName}</div>
+                <div className="text-xs opacity-70">{branch.collectionRate}%</div>
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Monthly Trends Chart */}
       <ChartCard 
-        title="Branch Performance vs Risk Matrix" 
-        description="Collection rate vs risk score - size indicates policy volume"
+        title="Monthly Collection Trends & Forecast" 
+        description="Total Due vs Collections with forecasted performance"
         variant="primary"
       >
         <div className="h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <ComposedChart data={monthlyTrendsData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
               <XAxis 
-                type="number"
-                dataKey="riskScore"
-                name="Risk Score"
+                dataKey="month" 
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
-                domain={[0, 50]}
               />
               <YAxis 
-                type="number"
-                dataKey="collectionRate"
-                name="Collection Rate"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
-                domain={[85, 100]}
+                tickFormatter={(value) => `₹${(value / 1000).toFixed(0)}K`}
               />
               <Tooltip 
                 contentStyle={{
@@ -256,87 +274,25 @@ export function BranchPerformanceView() {
                   border: '1px solid hsl(var(--border))',
                   borderRadius: '8px'
                 }}
-                formatter={(value, name) => {
-                  if (name === 'Collection Rate') return [`${value}%`, name];
-                  if (name === 'Risk Score') return [value, name];
+                formatter={(value: any, name: string) => {
+                  if (name === 'totalDue') return [`₹${(value / 1000).toFixed(0)}K`, 'Total Due'];
+                  if (name === 'totalCollection') return [`₹${(value / 1000).toFixed(0)}K`, 'Total Collection'];
+                  if (name === 'forecastedCollection') return [`₹${(value / 1000).toFixed(0)}K`, 'Forecasted Collection'];
                   return [value, name];
                 }}
-                labelFormatter={(label, payload) => {
-                  if (payload && payload[0]) {
-                    const data = payload[0].payload;
-                    return `${data.branchName} (${data.branchCode})`;
-                  }
-                  return label;
-                }}
               />
-              <Scatter 
-                data={filteredBranches} 
-                fill="hsl(var(--primary))"
-              >
-                {filteredBranches.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`}
-                    fill={selectedBranch === entry.branchCode ? 'hsl(var(--accent))' : 'hsl(var(--primary))'}
-                    onClick={() => handleBranchClick(entry.branchCode)}
-                    style={{ cursor: 'pointer' }}
-                    r={Math.sqrt(entry.policies) / 5} // Size based on policies
-                  />
-                ))}
-              </Scatter>
-            </ScatterChart>
-          </ResponsiveContainer>
-        </div>
-      </ChartCard>
-
-      {/* Branch Collection Performance Chart */}
-      <ChartCard 
-        title="Branch Collection Performance Ranking" 
-        description="Click on bars to view detailed branch information"
-        variant="secondary"
-      >
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart 
-              data={filteredBranches.sort((a, b) => b.collectionRate - a.collectionRate)} 
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--chart-grid))" />
-              <XAxis 
-                dataKey="branchCode" 
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
-                angle={-45}
-                textAnchor="end"
-                height={80}
+              <Bar dataKey="totalDue" fill="hsl(var(--chart-2))" name="totalDue" opacity={0.7} />
+              <Bar dataKey="totalCollection" fill="hsl(var(--chart-1))" name="totalCollection" />
+              <Line 
+                type="monotone" 
+                dataKey="forecastedCollection" 
+                stroke="hsl(var(--chart-3))" 
+                strokeWidth={3}
+                strokeDasharray="5 5"
+                name="forecastedCollection"
+                dot={{ fill: 'hsl(var(--chart-3))', strokeWidth: 2, r: 4 }}
               />
-              <YAxis 
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
-                domain={[85, 100]}
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '8px'
-                }}
-                formatter={(value, name) => [`${value}%`, 'Collection Rate']}
-                labelFormatter={(label) => {
-                  const branch = filteredBranches.find(b => b.branchCode === label);
-                  return branch ? `${branch.branchName} (${label})` : label;
-                }}
-              />
-              <Bar dataKey="collectionRate" radius={[4, 4, 0, 0]}>
-                {filteredBranches.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={selectedBranch === entry.branchCode ? 'hsl(var(--accent))' : COLORS[index % COLORS.length]}
-                    onClick={() => handleBranchClick(entry.branchCode)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       </ChartCard>
@@ -351,104 +307,58 @@ export function BranchPerformanceView() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Branch Info */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-foreground">Branch Information</h4>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Code:</span>
-                    <span className="font-medium">{selectedBranchData.branchCode}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Region:</span>
-                    <span>{selectedBranchData.region}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Manager:</span>
-                    <span>{selectedBranchData.manager}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Size:</span>
-                    <Badge variant="outline">{selectedBranchData.size}</Badge>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+              <div className="text-center p-4 bg-primary/5 rounded-lg">
+                <div className="flex items-center justify-center mb-2">
+                  <Users className="w-5 h-5 text-primary" />
                 </div>
+                <div className="text-2xl font-bold text-primary">
+                  {selectedBranchData.policies.toLocaleString()}
+                </div>
+                <div className="text-sm text-muted-foreground">Total Policies</div>
               </div>
-
-              {/* Performance Metrics */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-foreground">Performance Metrics</h4>
-                <div className="space-y-3">
-                  <div className="p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Target className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium">Collection Rate</span>
-                    </div>
-                    <div className="text-2xl font-bold text-primary">
-                      {selectedBranchData.collectionRate}%
-                    </div>
-                  </div>
-                  <div className="p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-center gap-2 mb-1">
-                      <DollarSign className="w-4 h-4 text-teal" />
-                      <span className="text-sm font-medium">Collections</span>
-                    </div>
-                    <div className="text-2xl font-bold text-teal">
-                      ₹{(selectedBranchData.collections / 1000000).toFixed(1)}M
-                    </div>
-                  </div>
-                  <div className="p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Users className="w-4 h-4 text-accent" />
-                      <span className="text-sm font-medium">Policies</span>
-                    </div>
-                    <div className="text-2xl font-bold text-accent">
-                      {selectedBranchData.policies.toLocaleString()}
-                    </div>
-                  </div>
+              
+              <div className="text-center p-4 bg-teal/5 rounded-lg">
+                <div className="flex items-center justify-center mb-2">
+                  <TrendingUp className="w-5 h-5 text-teal" />
                 </div>
+                <div className="text-2xl font-bold text-teal">
+                  {selectedBranchData.collectionRate}%
+                </div>
+                <div className="text-sm text-muted-foreground">Collection Rate</div>
               </div>
-
-              {/* Risk & Growth */}
-              <div className="space-y-4">
-                <h4 className="font-semibold text-foreground">Risk & Growth</h4>
-                <div className="space-y-3">
-                  <div className="p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium">Risk Score</span>
-                      <Badge className={getRiskColor(selectedBranchData.riskScore)}>
-                        {getRiskLabel(selectedBranchData.riskScore)}
-                      </Badge>
-                    </div>
-                    <div className="text-2xl font-bold">
-                      {selectedBranchData.riskScore}/50
-                    </div>
-                  </div>
-                  <div className="p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-center gap-2 mb-1">
-                      {selectedBranchData.growth > 0 ? (
-                        <TrendingUp className="w-4 h-4 text-teal" />
-                      ) : (
-                        <TrendingDown className="w-4 h-4 text-destructive" />
-                      )}
-                      <span className="text-sm font-medium">Growth Rate</span>
-                    </div>
-                    <div className={`text-2xl font-bold ${selectedBranchData.growth > 0 ? 'text-teal' : 'text-destructive'}`}>
-                      {selectedBranchData.growth > 0 ? '+' : ''}{selectedBranchData.growth}%
-                    </div>
-                  </div>
+              
+              <div className="text-center p-4 bg-accent/5 rounded-lg">
+                <div className="flex items-center justify-center mb-2">
+                  <DollarSign className="w-5 h-5 text-accent" />
                 </div>
+                <div className="text-2xl font-bold text-accent">
+                  ₹{(selectedBranchData.collections / 1000000).toFixed(1)}M
+                </div>
+                <div className="text-sm text-muted-foreground">Collections</div>
+              </div>
+              
+              <div className="text-center p-4 bg-secondary/5 rounded-lg">
+                <div className="flex items-center justify-center mb-2">
+                  <Target className="w-5 h-5 text-secondary" />
+                </div>
+                <div className="text-2xl font-bold text-secondary">
+                  {selectedBranchData.productivity.toLocaleString()}
+                </div>
+                <div className="text-sm text-muted-foreground">Productivity Score</div>
               </div>
             </div>
 
-            <div className="mt-6 pt-6 border-t">
-              <div className="flex gap-2 mb-4">
-                <Button variant="outline" className="flex items-center gap-2">
-                  Compare with Peers
-                </Button>
-              </div>
-              
-              {/* Peer Comparison Table */}
+            <div className="flex justify-center mb-4">
+              <Button 
+                onClick={() => setShowPeerComparison(!showPeerComparison)}
+                variant={showPeerComparison ? "default" : "outline"}
+              >
+                Compare with Peers
+              </Button>
+            </div>
+            
+            {showPeerComparison && peerBranch && (
               <div className="mt-4 p-4 bg-muted/20 rounded-lg">
                 <h4 className="font-semibold text-foreground mb-3">Branch vs Peer Comparison</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
@@ -474,15 +384,15 @@ export function BranchPerformanceView() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Peer Branch:</span>
-                      <span className="font-medium">Delhi Central (BR001)</span>
+                      <span className="font-medium">{peerBranch.branchName} ({peerBranch.branchCode})</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Policies:</span>
-                      <span className="font-medium">450</span>
+                      <span className="font-medium">{peerBranch.policies.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Collection Rate:</span>
-                      <span className="font-medium text-teal">96.8%</span>
+                      <span className="font-medium text-teal">{peerBranch.collectionRate}%</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Common Products:</span>
@@ -493,24 +403,66 @@ export function BranchPerformanceView() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Performance Gap:</span>
-                      <span className={`font-medium ${(96.8 - selectedBranchData.collectionRate) > 0 ? 'text-accent' : 'text-teal'}`}>
-                        {(96.8 - selectedBranchData.collectionRate) > 0 ? '+' : ''}{(96.8 - selectedBranchData.collectionRate).toFixed(1)}%
+                      <span className={`font-medium ${(peerBranch.collectionRate - selectedBranchData.collectionRate) > 0 ? 'text-accent' : 'text-teal'}`}>
+                        {(peerBranch.collectionRate - selectedBranchData.collectionRate) > 0 ? '+' : ''}{(peerBranch.collectionRate - selectedBranchData.collectionRate).toFixed(1)}%
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Policy Gap:</span>
-                      <span className="font-medium">{(450 - selectedBranchData.policies).toLocaleString()}</span>
+                      <span className="text-muted-foreground">Policy Volume Gap:</span>
+                      <span className={`font-medium ${(peerBranch.policies - selectedBranchData.policies) > 0 ? 'text-accent' : 'text-teal'}`}>
+                        {(peerBranch.policies - selectedBranchData.policies) > 0 ? '+' : ''}{(peerBranch.policies - selectedBranchData.policies)}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Opportunity:</span>
-                      <span className="font-medium text-accent">₹{((450 - selectedBranchData.policies) * 5000 / 1000000).toFixed(1)}M</span>
+                      <span className="font-medium text-primary">
+                        ₹{(((peerBranch.collectionRate - selectedBranchData.collectionRate) / 100) * selectedBranchData.collections / 1000).toFixed(0)}K
+                      </span>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Ranking:</span>
-                      <Badge variant="outline">
-                        #{branchPerformanceData.sort((a, b) => b.collectionRate - a.collectionRate).findIndex(b => b.branchCode === selectedBranchData.branchCode) + 1} of {branchPerformanceData.length}
-                      </Badge>
+                    <div className="text-xs text-muted-foreground">
+                      Potential additional collection if performance matches peer
                     </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="font-medium text-foreground mb-2">Branch Details</div>
+                <div className="space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Manager:</span>
+                    <span>{selectedBranchData.manager}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Region:</span>
+                    <span>{selectedBranchData.region}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Branch Size:</span>
+                    <span>{selectedBranchData.size}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Growth Rate:</span>
+                    <span className={selectedBranchData.growth > 0 ? "text-teal" : "text-accent"}>
+                      {selectedBranchData.growth > 0 ? "+" : ""}{selectedBranchData.growth}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="font-medium text-foreground mb-2">Performance Insights</div>
+                <div className="space-y-1 text-xs">
+                  <div className="p-2 bg-primary/5 rounded">
+                    <span className="font-medium">Risk Assessment:</span> {selectedBranchData.riskScore < 20 ? "Low Risk" : selectedBranchData.riskScore < 30 ? "Medium Risk" : "High Risk"}
+                  </div>
+                  <div className="p-2 bg-teal/5 rounded">
+                    <span className="font-medium">Performance:</span> {selectedBranchData.collectionRate > 95 ? "Excellent" : selectedBranchData.collectionRate > 90 ? "Good" : "Needs Improvement"}
+                  </div>
+                  <div className="p-2 bg-accent/5 rounded">
+                    <span className="font-medium">Trend:</span> {selectedBranchData.growth > 5 ? "Growing" : selectedBranchData.growth > 0 ? "Stable" : "Declining"}
                   </div>
                 </div>
               </div>
